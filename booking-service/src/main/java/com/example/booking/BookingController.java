@@ -2,6 +2,7 @@ package com.example.booking;
 
 import com.example.booking.mobile;
 import com.example.booking.service.InventoryClientService;
+import com.example.booking.service.bookingService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,15 +12,15 @@ import java.math.BigDecimal;
 @RequestMapping("/booking")
 public class BookingController {
 
-    private final InventoryClientService inventoryClient;
+    private final bookingService bookingService;
 
-    public BookingController(InventoryClientService inventoryClient) {
-        this.inventoryClient = inventoryClient;
+    public BookingController(bookingService bookingService) {
+        this.bookingService = bookingService;
     }
 
     @GetMapping("/check-mobile/{id}")
     public ResponseEntity<mobile> checkMobile(@PathVariable Long id) {
-        mobile m = inventoryClient.getMobileById(id);
+        mobile m = bookingService.fetchMobileForBooking(id);
         return ResponseEntity.ok(m);
     }
 
@@ -35,6 +36,9 @@ public class BookingController {
         m.setQuantity(10);
         return ResponseEntity.ok(m);
     }
-
 }
+
+
+
+
 

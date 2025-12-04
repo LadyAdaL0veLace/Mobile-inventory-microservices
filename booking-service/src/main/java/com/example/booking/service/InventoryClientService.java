@@ -11,8 +11,8 @@ public class InventoryClientService {
     @Autowired
     private RestTemplate restTemplate;
 
-    // For Phase A (standalone) we call the mock endpoint inside same app:
-    private final String inventoryBase = "http://localhost:8083/mock-inventory";
+    // For Phase A: calling mock inventory endpoint from booking-service
+    private final String inventoryBase = "http://localhost:8087/mock-inventory";
 
     public mobile getMobileById(Long id) {
         String url = inventoryBase + "/mobile/" + id;
