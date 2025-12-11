@@ -12,10 +12,10 @@ public class InventoryClientService {
     private RestTemplate restTemplate;
 
     // For Phase A: calling mock inventory endpoint from booking-service
-    private final String inventoryBase = "http://localhost:8087/mock-inventory";
+    private final String inventoryBase = "http://localhost:8083/inventory/mobile";
 
     public mobile getMobileById(Long id) {
-        String url = inventoryBase + "/mobile/" + id;
-        return restTemplate.getForObject(url, mobile.class);
+        return restTemplate.getForObject(inventoryBase + "/" + id, mobile.class);
     }
+
 }

@@ -1,59 +1,48 @@
 package com.example.Inventory.service;
 
-import com.example.Inventory.service.service.MobileService;
 import com.example.Inventory.service.model.mobile;
-import org.springframework.http.*;
+import com.example.Inventory.service.service.InventoryService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.Map;
-
 @RestController
-@RequestMapping("/mobile")
+@RequestMapping("/inventory/mobile")
 public class InventoryController {
 
-    private final MobileService service;
+    private final InventoryService inventoryService;
 
-    public InventoryController(MobileService service) {
-        this.service = service;
+    public InventoryController(InventoryService inventoryService) {
+        this.inventoryService = inventoryService;
     }
 
-    @GetMapping("/mobile")
-    public ResponseEntity<List<mobile>> getAll() {
-        return ResponseEntity.ok(service.getAll());
+    // GET BY ID
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getMobile(@PathVariable Long id) {
+        mobile m = inventoryService.getMobile(id);
+        if (m == null) return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(m);
     }
 
-    @GetMapping("/mobile/{id}")
-    public ResponseEntity<mobile> getById(@PathVariable Long id) {
-        return service.getById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    // ADD NEW MOBILE (POST)
+    @PostMapping
+    public ResponseEntity<mobile> addMobile(@RequestBody mobile mobile) {
+        mobile saved = inventoryService.addMobile(mobile);
+        return ResponseEntity.ok(saved);
     }
 
-    @PostMapping("/mobile")
-    public ResponseEntity<mobile> create(@RequestBody mobile mobile) {
-        mobile saved = service.save(mobile);
-        return ResponseEntity.status(HttpStatus.CREATED).body(saved);
+    // UPDATE QUANTITY ONLY (PATCH)
+    @PatchMapping("/{id}/quantity/{qty}")
+    public ResponseEntity<?> updateQuantity(@PathVariable Long id, @PathVariable int qty) {
+        mobile updated = inventoryService.updateQuantity(id, qty);
+        if (updated == null) return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(updated);
     }
 
-    @PutMapping("/mobile/{id}")
-    public ResponseEntity<mobile> update(@PathVariable Long id, @RequestBody mobile mobile) {
-        return service.update(id, mobile)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
-    }
-
-    @PatchMapping("/mobile/{id}")
-    public ResponseEntity<mobile> partialUpdate(@PathVariable Long id, @RequestBody Map<String, Object> updates) {
-        return service.partialUpdate(id, updates)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
-    }
-
-    @DeleteMapping("/mobile/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
-        boolean deleted = service.delete(id);
-        return deleted ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
+    // DELETE MOBILE (DELETE)
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteMobile(@PathVariable Long id) {
+        boolean deleted = inventoryService.deleteMobile(id);
+        if (!deleted) return ResponseEntity.notFound().build();
+        return ResponseEntity.ok("Deleted mobile with ID " + id);
     }
 }
-
